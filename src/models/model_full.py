@@ -29,6 +29,11 @@ class EduRiskTabNet模型(nn.Module):
         self.maf = 缺失感知融合(配置.maf)
         self.tabnet = TabNet基座(配置.tabnet)
 
-    def forward(self, x_hat: torch.Tensor, m: torch.Tensor) -> Tuple[torch.Tensor, List[torch.Tensor], List[torch.Tensor], Dict[str, torch.Tensor]]:
+    def forward(
+        self,
+        x_hat: torch.Tensor,
+        m: torch.Tensor,
+        组矩阵: torch.Tensor | None = None,
+    ) -> Tuple[torch.Tensor, List[torch.Tensor], List[torch.Tensor], Dict[str, torch.Tensor]]:
         x_tilde = self.maf(x_hat, m)
-        return self.tabnet(x_tilde)
+        return self.tabnet(x_tilde, 组矩阵=组矩阵)

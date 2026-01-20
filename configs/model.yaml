@@ -13,3 +13,8 @@ tabnet:
   num_classes: 5
   sparse_weight: 1.0
   gamma: 1.5
+  use_dm_gfs: false
+  group_dim: 0
+
+dm_gfs:
+  group_loss_weight: 1.0
