@@ -1,0 +1,14 @@
+data:
+  path: mydata.csv
+  format: csv
+  label_col: label
+  categorical_cols: []
+  group_col: null
+  impute: mean
+  standardize: true
+  categorical_encoding: none
+  stats_path: results/preprocess/stats.json
+loader:
+  batch_size: 32
+  shuffle: true
+  num_workers: 0
