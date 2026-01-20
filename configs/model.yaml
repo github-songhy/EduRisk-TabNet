@@ -1,0 +1,15 @@
+maf:
+  input_dim: 8
+  embed_dim: 1
+  context_dim: 8
+  use_film: true
+  use_embedding: true
+
+tabnet:
+  input_dim: 8
+  decision_dim: 4
+  attention_dim: 4
+  steps: 3
+  num_classes: 5
+  sparse_weight: 1.0
+  gamma: 1.5
