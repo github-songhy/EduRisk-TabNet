@@ -26,3 +26,17 @@ sasc:
   early_exit: false
   threshold: 0.95
   cost_epsilon: 1e-4
+
+head:
+  type: softmax
+  input_dim: 4
+  num_classes: 5
+
+dacos:
+  num_classes: 5
+  eta: 1.0
+  alpha: 2.0
+  beta: 1.0
+  tau: 1.0
+  lambda_risk: 1.0
+  warmup_steps: 0
