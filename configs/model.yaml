@@ -18,3 +18,11 @@ tabnet:
 
 dm_gfs:
   group_loss_weight: 1.0
+
+sasc:
+  enabled: true
+  steps: 3
+  decision_dim: 4
+  early_exit: false
+  threshold: 0.95
+  cost_epsilon: 1e-4
