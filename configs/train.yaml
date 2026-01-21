@@ -1,0 +1,19 @@
+experiment:
+  output_dir: results/train/{timestamp}
+  seeds: [42, 43, 44, 45, 46]
+
+trainer:
+  epochs: 2
+
+optimizer:
+  lr: 0.001
+
+loss:
+  lambda_sparse: 1.0
+  lambda_group: 1.0
+  lambda_step: 1.0
+
+loader:
+  batch_size: 32
+  shuffle: true
+  num_workers: 0
