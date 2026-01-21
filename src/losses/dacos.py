@@ -5,7 +5,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Tuple
 
-import torch
+try:
+    import torch
+except ModuleNotFoundError:  # pragma: no cover
+    torch = None
 
 
 @dataclass
@@ -24,6 +27,8 @@ class DACOS配置:
 def 构建代价矩阵(配置: DACOS配置, 设备: torch.device) -> torch.Tensor:
     """构建代价矩阵C，形状为(K, K)。"""
 
+    if torch is None:
+        raise ModuleNotFoundError("未检测到torch，请先安装依赖")
     K = 配置.类别数
     y = torch.arange(K, device=设备).view(-1, 1)
     a = torch.arange(K, device=设备).view(1, -1)
@@ -37,6 +42,8 @@ def 构建代价矩阵(配置: DACOS配置, 设备: torch.device) -> torch.Tenso
 def 期望代价(prob: torch.Tensor, 代价矩阵: torch.Tensor) -> torch.Tensor:
     """计算期望代价R，返回形状(B, K)。"""
 
+    if torch is None:
+        raise ModuleNotFoundError("未检测到torch，请先安装依赖")
     return prob @ 代价矩阵
 
 
@@ -48,6 +55,8 @@ def 风险对齐损失(
 ) -> torch.Tensor:
     """计算风险对齐损失。"""
 
+    if torch is None:
+        raise ModuleNotFoundError("未检测到torch，请先安装依赖")
     风险 = 期望代价(prob, 代价矩阵)
     温度 = max(tau, 1e-6)
     pi = torch.softmax(-风险 / 温度, dim=1)
@@ -66,6 +75,8 @@ def 风险权重(当前步: int, 配置: DACOS配置) -> float:
 def Bayes最小代价预测(prob: torch.Tensor, 代价矩阵: torch.Tensor) -> torch.Tensor:
     """Bayes最小代价决策，返回预测类别索引。"""
 
+    if torch is None:
+        raise ModuleNotFoundError("未检测到torch，请先安装依赖")
     风险 = 期望代价(prob, 代价矩阵)
     return torch.argmin(风险, dim=1)
 
@@ -73,6 +84,8 @@ def Bayes最小代价预测(prob: torch.Tensor, 代价矩阵: torch.Tensor) -> t
 def ExpectedCost指标(prob: torch.Tensor, 标签: torch.Tensor, 代价矩阵: torch.Tensor) -> torch.Tensor:
     """计算期望代价指标。"""
 
+    if torch is None:
+        raise ModuleNotFoundError("未检测到torch，请先安装依赖")
     风险 = 期望代价(prob, 代价矩阵)
     标签风险 = 风险.gather(1, 标签.view(-1, 1)).squeeze(1)
     return 标签风险.mean()

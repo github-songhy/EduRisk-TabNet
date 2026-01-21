@@ -6,10 +6,22 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Optional
 
-import numpy as np
-import pandas as pd
-import torch
-from torch.utils.data import Dataset
+try:
+    import numpy as np
+except ModuleNotFoundError:  # pragma: no cover
+    np = None
+
+try:
+    import pandas as pd
+except ModuleNotFoundError:  # pragma: no cover
+    pd = None
+
+try:
+    import torch
+    from torch.utils.data import Dataset
+except ModuleNotFoundError:  # pragma: no cover
+    torch = None
+    Dataset = object
 
 from src.data.preprocess import 应用预处理, 拟合预处理, 读取数据
 
@@ -35,10 +47,16 @@ class 表格数据集(Dataset):
     def __init__(self, 配置: 数据集配置, 训练模式: bool = True) -> None:
         self.配置 = 配置
         self.训练模式 = 训练模式
+        if torch is None:
+            raise ModuleNotFoundError("未检测到torch，请先安装依赖")
+        if pd is None:
+            raise ModuleNotFoundError("未检测到pandas，请先安装依赖")
         self.数据表 = 读取数据(Path(配置.数据路径), 配置.数据格式)
 
         if 配置.标签列 not in self.数据表.columns:
             raise ValueError(f"标签列不存在：{配置.标签列}")
+        if np is None:
+            raise ModuleNotFoundError("未检测到numpy，请先安装依赖")
 
         if 训练模式:
             _, 缺失指示, _, 特征矩阵 = 拟合预处理(

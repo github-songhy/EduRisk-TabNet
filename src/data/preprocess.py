@@ -7,9 +7,20 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
-import numpy as np
-import pandas as pd
-from sklearn.preprocessing import StandardScaler
+try:
+    import numpy as np
+except ModuleNotFoundError:  # pragma: no cover
+    np = None
+
+try:
+    import pandas as pd
+except ModuleNotFoundError:  # pragma: no cover
+    pd = None
+
+try:
+    from sklearn.preprocessing import StandardScaler
+except ModuleNotFoundError:  # pragma: no cover
+    StandardScaler = None
 
 
 @dataclass
@@ -130,7 +141,13 @@ def 拟合预处理(
 ) -> Tuple[pd.DataFrame, np.ndarray, 预处理统计, np.ndarray]:
     """拟合预处理并返回处理后的特征与缺失指示。"""
 
+    if pd is None:
+        raise ModuleNotFoundError("未检测到pandas，请先安装依赖")
     数值列, 类别列 = _推断列(df, 标签列, 类别列)
+    if np is None:
+        raise ModuleNotFoundError("未检测到numpy，请先安装依赖")
+    if StandardScaler is None:
+        raise ModuleNotFoundError("未检测到scikit-learn，请先安装依赖")
 
     均值 = {列: float(df[列].mean()) for 列 in 数值列}
     中位数 = {列: float(df[列].median()) for 列 in 数值列}
@@ -188,9 +205,15 @@ def 应用预处理(
 ) -> Tuple[pd.DataFrame, np.ndarray, 预处理统计, np.ndarray]:
     """使用已保存统计进行预处理。"""
 
+    if pd is None:
+        raise ModuleNotFoundError("未检测到pandas，请先安装依赖")
     统计 = _读取统计(统计路径)
     数值列 = 统计.数值列
     类别列 = 统计.类别列
+    if np is None:
+        raise ModuleNotFoundError("未检测到numpy，请先安装依赖")
+    if StandardScaler is None:
+        raise ModuleNotFoundError("未检测到scikit-learn，请先安装依赖")
 
     特征列 = 数值列 + 类别列
     缺失指示 = (~df[特征列].isna()).astype(int).to_numpy(dtype=np.float32)

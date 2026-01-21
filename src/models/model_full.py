@@ -5,8 +5,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Dict, List, Tuple
 
-import torch
-from torch import nn
+try:
+    import torch
+    from torch import nn
+except ModuleNotFoundError:  # pragma: no cover
+    torch = None
+    nn = None
 
 from src.losses.dacos import Bayes最小代价预测, DACOS配置, ExpectedCost指标, 构建代价矩阵
 from src.models.heads import Head配置, 创建分类头
@@ -30,6 +34,8 @@ class EduRiskTabNet模型(nn.Module):
     """MAF + TabNet基座的统一模型。"""
 
     def __init__(self, 配置: 模型配置) -> None:
+        if nn is None or torch is None:
+            raise ModuleNotFoundError("未检测到torch，请先安装依赖")
         super().__init__()
         self.配置 = 配置
         self.maf = 缺失感知融合(配置.maf)

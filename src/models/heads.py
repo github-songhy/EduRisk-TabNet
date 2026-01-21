@@ -5,8 +5,14 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Tuple
 
-import torch
-from torch import nn
+try:
+    import torch
+    from torch import nn
+    BaseModule = nn.Module
+except ModuleNotFoundError:  # pragma: no cover
+    torch = None
+    nn = None
+    BaseModule = object
 
 
 @dataclass
@@ -18,10 +24,12 @@ class Head配置:
     类型: str = "softmax"  # softmax 或 ordinal
 
 
-class SoftmaxHead(nn.Module):
+class SoftmaxHead(BaseModule):
     """softmax分类头。"""
 
     def __init__(self, 输入维度: int, 类别数: int) -> None:
+        if nn is None:
+            raise ModuleNotFoundError("未检测到torch，请先安装依赖")
         super().__init__()
         self.线性 = nn.Linear(输入维度, 类别数)
 
@@ -31,10 +39,12 @@ class SoftmaxHead(nn.Module):
         return logits, prob
 
 
-class OrdinalHead(nn.Module):
+class OrdinalHead(BaseModule):
     """有序分类头。"""
 
     def __init__(self, 输入维度: int, 类别数: int) -> None:
+        if nn is None:
+            raise ModuleNotFoundError("未检测到torch，请先安装依赖")
         super().__init__()
         self.类别数 = 类别数
         self.线性 = nn.Linear(输入维度, 类别数 - 1)
@@ -47,6 +57,8 @@ class OrdinalHead(nn.Module):
 
     def _还原概率(self, q: torch.Tensor) -> torch.Tensor:
         # q形状: (B, K-1)
+        if torch is None:
+            raise ModuleNotFoundError("未检测到torch，请先安装依赖")
         批大小 = q.size(0)
         K = self.类别数
         prob = torch.zeros(批大小, K, device=q.device)
