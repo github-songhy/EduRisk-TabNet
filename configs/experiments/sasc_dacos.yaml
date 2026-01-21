@@ -1,0 +1,64 @@
+experiment:
+  name: sasc_dacos
+  output_dir: results/sasc_dacos/{timestamp}
+  seeds: [42, 43, 44]
+trainer:
+  epochs: 2
+optimizer:
+  lr: 0.001
+loss:
+  lambda_sparse: 1.0
+  lambda_group: 0.0
+  lambda_step: 1.0
+loader:
+  batch_size: 32
+  shuffle: true
+  num_workers: 0
+data:
+  path: data/synth/data.csv
+  format: csv
+  label_col: label
+  categorical_cols: ["cat_0", "cat_1"]
+  group_col: null
+  impute: mean
+  standardize: true
+  categorical_encoding: none
+  stats_path: results/sasc_dacos/{timestamp}/preprocess_stats.json
+model:
+  maf:
+    input_dim: 12
+    embed_dim: 1
+    context_dim: 8
+    use_film: false
+    use_embedding: false
+  tabnet:
+    input_dim: 12
+    decision_dim: 8
+    attention_dim: 8
+    steps: 3
+    num_classes: 4
+    sparse_weight: 1.0
+    gamma: 1.5
+    use_dm_gfs: false
+    group_dim: 0
+  dm_gfs:
+    group_loss_weight: 1.0
+  sasc:
+    enabled: true
+    steps: 3
+    decision_dim: 8
+    early_exit: false
+    threshold: 0.95
+    cost_epsilon: 1e-4
+  head:
+    type: softmax
+    input_dim: 8
+    num_classes: 4
+  dacos:
+    num_classes: 4
+    eta: 1.0
+    alpha: 2.0
+    beta: 1.0
+    tau: 1.0
+    lambda_risk: 1.0
+    warmup_steps: 0
